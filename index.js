@@ -216,11 +216,18 @@ function addTask(event) {
 
 
 function toggleSidebar(show) {
- 
+  const sidebar = document.getElementById('side-bar-div');
+  if (show) {
+    sidebar.style.display = 'block';
+  } else {
+    sidebar.style.display = 'none';
+  }
 }
 
 function toggleTheme() {
- 
+  const body = document.body;
+  // Toggle between light and dark themes by toggling the 'dark-theme' class on the body
+  body.classList.toggle('dark-theme');
 }
 
 
