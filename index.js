@@ -365,7 +365,7 @@ function openEditTaskModal(task) {
   //saveChangesBtn.removeEventListener("click");
   saveChangesBtn.addEventListener("click", () => {
     saveTaskChanges(task.id);
-    loading.reload();
+    location.reload();
   });
 
   // Delete task using a helper function and close the task modal
@@ -373,6 +373,7 @@ function openEditTaskModal(task) {
   deleteTaskBtn.addEventListener("click", () => {
     deleteTask(task.id);
     toggleModal(false, elements.editTaskModal); // Close the edit task modal
+    location.reload();
   });
 
   toggleModal(true, elements.editTaskModal); // Show the edit task modal
@@ -408,10 +409,19 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function init() {
+
+  populateElements();
+
   setupEventListeners();
   const showSidebar = localStorage.getItem("showSideBar") === "true";
   toggleSidebar(showSidebar);
   const isLightTheme = localStorage.getItem("light-theme") === "enabled";
   document.body.classList.toggle("light-theme", isLightTheme);
   fetchAndDisplayBoardsAndTasks(); // Initial display of boards and tasks
+}
+
+function populateElements() {
+  elements.modalWindow = document.getElementById("new-task-modal-window");
+  elements.editTaskModal = document.querySelector('.edit-task-modal-window');
+  // Populate other elements here as needed
 }
