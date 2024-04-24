@@ -5,6 +5,7 @@ import {
   deleteTask,
   getTasks,
   patchTask,
+  putTask
 } from "./utils/taskFunctions.js";
 
 /*************************************************************************************************************************************************
@@ -36,7 +37,7 @@ const elements = {
   cancelEditBtn: document.getElementById("cancel-edit-btn"),
   cancelAddTaskBtn: document.getElementById("cancel-add-task-btn"),
   filterDiv: document.getElementById("filterDiv"),
-  columnDivs: document.querySelectorAll(".column-div"),
+  columnDiv: document.querySelectorAll(".column-div"),
   sidebar: document.getElementById("side-bar-div"),
 };
 
@@ -82,11 +83,11 @@ function displayBoards(boards) {
 // TASK: Fix Bugs
 function filterAndDisplayTasksByBoard(boardName) {
   const tasks = getTasks(); // Fetch tasks from a simulated local storage function
-  const filteredTasks = tasks.filter((task) => (task.board = boardName));
+  //const filteredTasks = tasks.filter((task) => (task.board = boardName));
 
   // Ensure the column titles are set outside of this function or correctly initialized before this function runs
 
-  elements.columnDivs.forEach((column) => {
+  elements.columnDiv.forEach((column) => {
     const status = column.getAttribute("data-status");
     // Reset column content while preserving the column title
     column.innerHTML = `<div class="column-head-div">
@@ -97,8 +98,9 @@ function filterAndDisplayTasksByBoard(boardName) {
     const tasksContainer = document.createElement("div");
     column.appendChild(tasksContainer);
 
+    const filteredTasks = tasks.filter((task) => (task.board = boardName) && (task.status = status));
+
     filteredTasks
-      .filter((task) => (task.status = status))
       .forEach((task) => {
         const taskElement = document.createElement("div");
         taskElement.classList.add("task-div");
@@ -135,7 +137,7 @@ function styleActiveBoard(boardName) {
 
 function addTaskToUI(task) {
   const column = document.querySelector(
-    '.column-div[data-status="${task.status}"]'
+    `.column-div[data-status="${task.status}"]`
   );
   if (!column) {
     console.error(`Column not found for status: ${task.status}`);
@@ -157,7 +159,7 @@ function addTaskToUI(task) {
   taskElement.textContent = task.title; // Modify as needed
   taskElement.setAttribute("data-task-id", task.id);
 
-  tasksContainer.appendChild();
+  tasksContainer.appendChild(taskElement);
 }
 
 function setupEventListeners() {
@@ -224,6 +226,12 @@ function addTask(event) {
     toggleModal(false);
     elements.filterDiv.style.display = "none"; // Also hide the filter overlay
     event.target.reset();
+
+    initialData.push(newTask);
+    //initialData.pop();
+    localStorage.setItem("tasks", JSON.stringify(initialData));
+    putTask(newTask);
+
     refreshTasksUI();
   }
 }
@@ -263,12 +271,14 @@ function openEditTaskModal(task) {
   // Call saveTaskChanges upon click of Save Changes button
   saveChangesBtn.addEventListener("click", () => {
     saveTaskChanges(task.id);
+    refreshTasksUI();
   });
 
   // Delete task using a helper function and close the task modal
   deleteTaskBtn.addEventListener("click", () => {
     deleteTask(task.id);
     toggleModal(false, elements.editTaskModal); // Close the edit task modal
+    refreshTasksUI();
   });
 
   toggleModal(true, elements.editTaskModal); // Show the edit task modal
