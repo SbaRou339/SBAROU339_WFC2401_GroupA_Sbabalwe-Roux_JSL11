@@ -1,12 +1,14 @@
 // TASK: import helper functions from utils
-import { initialData } from "./initialData.js";
 import {
   createNewTask,
   deleteTask,
   getTasks,
   patchTask,
-  putTask
+  putTask,
 } from "./utils/taskFunctions.js";
+// TASK: import initialData
+import { initialData } from "./initialData.js";
+
 
 /*************************************************************************************************************************************************
  * FIX BUGS!!!
@@ -39,6 +41,7 @@ const elements = {
   filterDiv: document.getElementById("filterDiv"),
   columnDiv: document.querySelectorAll(".column-div"),
   sidebar: document.getElementById("side-bar-div"),
+  tasksContainerAll: document.querySelector(".tasks-container"),
 };
 
 let activeBoard = "";
@@ -98,9 +101,10 @@ function filterAndDisplayTasksByBoard(boardName) {
     const tasksContainer = document.createElement("div");
     column.appendChild(tasksContainer);
 
-    const filteredTasks = tasks.filter((task) => (task.board = boardName) && (task.status = status));
+    const filteredTasks = tasks.filter((task) => task.board === boardName);
 
     filteredTasks
+      .filter((task) => task.status === status)
       .forEach((task) => {
         const taskElement = document.createElement("div");
         taskElement.classList.add("task-div");
@@ -144,7 +148,7 @@ function addTaskToUI(task) {
     return;
   }
 
-  let tasksContainer = column.querySelector(".tasks-container");
+  let tasksContainer = elements.tasksContainerAll;
   if (!tasksContainer) {
     console.warn(
       `Tasks container not found for status: ${task.status}, creating one.`
@@ -219,6 +223,7 @@ function addTask(event) {
     title: document.getElementById("title-input").value,
     description: document.getElementById("desc-input").value,
     status: document.getElementById("select-status").value,
+    board: activeBoard,
   };
   const newTask = createNewTask(task);
   if (newTask) {
@@ -227,10 +232,10 @@ function addTask(event) {
     elements.filterDiv.style.display = "none"; // Also hide the filter overlay
     event.target.reset();
 
-    initialData.push(newTask);
-    //initialData.pop();
-    localStorage.setItem("tasks", JSON.stringify(initialData));
-    putTask(newTask);
+    // initialData.push(newTask);
+    // initialData.pop();
+    // localStorage.setItem("tasks", JSON.stringify(initialData));
+    // putTask(newTask);
 
     refreshTasksUI();
   }
