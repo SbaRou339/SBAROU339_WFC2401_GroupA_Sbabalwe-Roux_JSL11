@@ -232,12 +232,11 @@ function addTask(event) {
     elements.filterDiv.style.display = "none"; // Also hide the filter overlay
     event.target.reset();
 
-    // initialData.push(newTask);
-    // initialData.pop();
-    // localStorage.setItem("tasks", JSON.stringify(initialData));
-    // putTask(newTask);
+    initialData.push(newTask);
+    
+    localStorage.setItem("tasks", JSON.stringify(initialData));
 
-    refreshTasksUI();
+    putTask(newTask);
   }
 }
 
@@ -255,8 +254,12 @@ function toggleSidebar(show) {
 function toggleTheme() {
   const body = document.body;
   // Toggle between light and dark themes by toggling the 'dark-theme' class on the body
+
   body.classList.toggle("dark-theme");
   body.classList.toggle("light-theme");
+
+  const isLightTheme = body.classList.contains("light-theme");
+  logo.src = isLightTheme ? "./assets/logo-light.svg" : "./assets/logo-dark.svg";
 }
 
 function openEditTaskModal(task) {
@@ -276,14 +279,13 @@ function openEditTaskModal(task) {
   // Call saveTaskChanges upon click of Save Changes button
   saveChangesBtn.addEventListener("click", () => {
     saveTaskChanges(task.id);
-    refreshTasksUI();
   });
 
   // Delete task using a helper function and close the task modal
   deleteTaskBtn.addEventListener("click", () => {
     deleteTask(task.id);
     toggleModal(false, elements.editTaskModal); // Close the edit task modal
-    refreshTasksUI();
+    location.reload();
   });
 
   toggleModal(true, elements.editTaskModal); // Show the edit task modal
@@ -310,6 +312,7 @@ function saveTaskChanges(taskId) {
   toggleModal(false, elements.editTaskModal);
 
   refreshTasksUI();
+  location.reload();
 }
 
 /*************************************************************************************************************************************************/
