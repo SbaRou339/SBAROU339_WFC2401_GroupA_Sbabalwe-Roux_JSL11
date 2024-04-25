@@ -9,7 +9,6 @@ import {
 // TASK: import initialData
 import { initialData } from "./initialData.js";
 
-
 /*************************************************************************************************************************************************
  * FIX BUGS!!!
  * **********************************************************************************************************************************************/
@@ -215,6 +214,31 @@ function toggleModal(show, modal = elements.modalWindow) {
  * COMPLETE FUNCTION CODE
  * **********************************************************************************************************************************************/
 
+// function addTask(event) {
+//   event.preventDefault();
+
+//   //Assign user input to the task object
+//   const task = {
+//     title: document.getElementById("title-input").value,
+//     description: document.getElementById("desc-input").value,
+//     status: document.getElementById("select-status").value,
+//     board: activeBoard,
+//   };
+//   const newTask = createNewTask(task);
+//   if (newTask) {
+//     addTaskToUI(newTask);
+//     toggleModal(false);
+//     elements.filterDiv.style.display = "none"; // Also hide the filter overlay
+//     event.target.reset();
+
+//     initialData.push(newTask);
+
+//     localStorage.setItem("tasks", JSON.stringify(initialData));
+
+//     putTask(newTask);
+//   }
+// }
+
 function addTask(event) {
   event.preventDefault();
 
@@ -227,18 +251,19 @@ function addTask(event) {
   };
   const newTask = createNewTask(task);
   if (newTask) {
+    const existingTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    existingTasks.push(newTask);
     addTaskToUI(newTask);
     toggleModal(false);
     elements.filterDiv.style.display = "none"; // Also hide the filter overlay
     event.target.reset();
 
-    initialData.push(newTask);
-    
-    localStorage.setItem("tasks", JSON.stringify(initialData));
+    localStorage.setItem("tasks", JSON.stringify(existingTasks));
 
     putTask(newTask);
   }
 }
+
 
 function toggleSidebar(show) {
   //sidebar.style.display = show ? 'block' : 'none';
@@ -258,8 +283,15 @@ function toggleTheme() {
   body.classList.toggle("dark-theme");
   body.classList.toggle("light-theme");
 
-  const isLightTheme = body.classList.contains("light-theme");
-  logo.src = isLightTheme ? "./assets/logo-light.svg" : "./assets/logo-dark.svg";
+  const logo = document.getElementById('logo');
+
+  const isLightTheme = document.body.classList.contains('light-theme');
+  
+  if (isLightTheme) {
+    logo.src = './assets/logo-light.svg'; 
+  } else {
+    logo.src = './assets/logo-dark.svg'; 
+  }
 }
 
 function openEditTaskModal(task) {
